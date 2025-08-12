@@ -5,23 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Redirection Hub Demo</title>
   <!-- Meta refresh redirect after 30 seconds -->
-  <meta http-equiv="refresh" content="30; url=../?via=meta" />
+  <meta http-equiv="refresh" content="30; url=../?via=meta&close_after_ms=30000" />
 </head>
 <body>
   <h1>Redirection Hub Demo</h1>
+  <p>This is a demonstration of various redirection methods to be handled by the Redirection Hub. The auto-close timing is set to 5 seconds for testing.</p>
 
   <h2>1. Redirection using window.open()</h2>
-  <button onclick="window.open('../?via=open', '_blank')">
+  <button onclick="window.open('../?via=open&close_after_ms=5000', '_blank')">
     Open in New Tab
   </button>
 
   <h2>2. Redirection using window.location.href</h2>
-  <button onclick="window.location.href='../?via=href'">
+  <button onclick="window.location.href='../?via=href&close_after_ms=5000'">
     Go to Another Page
   </button>
 
   <h2>3. Redirection via window.location.replace</h2>
-  <button onclick="window.location.replace('../?via=replace')">
+  <button onclick="window.location.replace('../?via=replace&close_after_ms=5000')">
 	Replace Current Page
   </button>
 
