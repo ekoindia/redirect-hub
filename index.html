@@ -1,0 +1,91 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>Redirecting…</title>
+<style>
+	body {
+		font: 14px system-ui;
+		margin: 24px;
+		color: #333
+	}
+	.hint {
+		opacity: .7
+	}
+</style>
+
+<body>Finishing up…</body>
+<script>
+	(async () => {
+		const CLOSE_AFTER = 10; // ms
+
+		// --- (1) Collect ALL parameters: query + hash (generic) ---
+		const allParams = new URLSearchParams(
+			(location.search.startsWith('?') ? location.search.slice(1) : '') +
+			(location.hash.startsWith('#') ? '&' + location.hash.slice(1) : '')
+		);
+
+		// Make a plain object; include duplicates as arrays.
+		const toObject = (sp) => {
+			const obj = {};
+			for (const [k, v] of sp.entries()) {
+				if (obj[k] === undefined) obj[k] = v;
+				else if (Array.isArray(obj[k])) obj[k].push(v);
+				else obj[k] = [obj[k], v];
+			}
+			return obj;
+		};
+		const payload = {
+			type: 'EXTERNAL_TOOL_REDIRECT',
+			params: toObject(allParams), // <-- EVERYTHING forwarded, untouched
+			// Optional metadata for your app:
+			receivedAt: Date.now(),
+			redirectorOrigin: location.origin,
+		};
+
+		// --- (2) Resolve target origin & optional return_to (from params) ---
+		// const targetOrigin = allParams.get('target_origin') || '';
+		const returnTo = allParams.get('return_to') || '';
+
+		// FOR TESTING: get `close_after_ms` param to control auto-close timing.
+		const closeAfterMs = allParams.get('close_after_ms') || 0;
+
+		// Helper: append all params to a URL (without duplicating existing keys)
+		const appendParams = (url, sp) => {
+			try {
+				const u = new URL(url);
+				for (const [k, v] of sp.entries()) {
+					// Preserve duplicates too:
+					if (Array.isArray(v)) v.forEach(val => u.searchParams.append(k, val));
+					else u.searchParams.append(k, v);
+				}
+				return u.toString();
+			} catch { return url; }
+		};
+
+		// --- (3) Primary: postMessage to opener ---
+		let delivered = false;
+		if (window.opener && !window.opener.closed) {
+			try {
+				window.opener.postMessage(payload);	// , targetOrigin
+				delivered = true;
+			} catch (e) {
+				console.warn('postMessage failed:', e);
+			}
+		}
+
+		// --- (4) Fallback: navigate this tab to return_to with all params attached ---
+		if (!delivered && returnTo) {
+			const url = appendParams(returnTo, allParams);
+			// Use replace so the redirector doesn’t remain in the back stack.
+			location.replace(url);
+			// No more code runs after navigation in most cases.
+			return;
+		}
+
+		// --- (5) Close or show manual close UI ---
+		setTimeout(() => {
+			try { window.close(); } catch { }
+			// If the browser blocks close(), show a simple hint.
+			document.body.innerHTML = `<p>All set.</p><p class="hint">If this tab didn’t close automatically, you can close it now.</p>`;
+		}, closeAfterMs || CLOSE_AFTER);
+	})();
+</script>
