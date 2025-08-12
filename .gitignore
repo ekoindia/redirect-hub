@@ -1,0 +1,33 @@
+# Node
+node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build
+/dist/
+/build/
+
+# VSCode
+.vscode/
+
+# Misc
+.env
+*.local
+*.log
+
+# Mac system files
+Icon?
+
+# Coverage
+coverage/
+
+# Others
+*.swp
+*.swo

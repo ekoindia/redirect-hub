@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Redirection Hub Demo</title>
+  <!-- Meta refresh redirect after 30 seconds -->
+  <meta http-equiv="refresh" content="30; url=../?via=meta" />
+</head>
+<body>
+  <h1>Redirection Hub Demo</h1>
+
+  <h2>1. Redirection using window.open()</h2>
+  <button onclick="window.open('../?via=open', '_blank')">
+    Open in New Tab
+  </button>
+
+  <h2>2. Redirection using window.location.href</h2>
+  <button onclick="window.location.href='../?via=href'">
+    Go to Another Page
+  </button>
+
+  <h2>3. Redirection via window.location.replace</h2>
+  <button onclick="window.location.replace('../?via=replace')">
+	Replace Current Page
+  </button>
+
+  <h2>4. Meta Refresh Redirect</h2>
+  <p>This page will automatically redirect after <strong>30 seconds</strong> using the 'refresh' meta tag.</p>
+</body>
+</html>
